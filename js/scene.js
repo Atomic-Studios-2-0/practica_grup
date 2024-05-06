@@ -1,7 +1,8 @@
 const config = {
     type: Phaser.AUTO,
     width: 800,
-    height: 600,
+    height: 900,
+    parent: "game",
     physics: {
         default: 'arcade',
         arcade: {
@@ -23,6 +24,9 @@ let cursors;
 let carreterra;
 let obstacles;
 let tiempoObstaculo;
+let posArray = 1;
+let arrayPosicionesCarreteras = [220,410,585];
+let rightDown, leftDown = true;
 
 function preload () { 
     this.load.image('carretera', '../resources/carretera.png'); // Imagen del fondo de la carretera
@@ -32,7 +36,7 @@ function preload () {
 
 function create () {    
     // Crea un fondo de carretera y le añade movimiento
-    carreterra = this.add.tileSprite(400, 300, 800, 600, 'carretera'); 
+    carreterra = this.add.tileSprite(400, 450, 0, 0, 'carretera'); 
 
     // Crea el coche con física
     coche = this.physics.add.sprite(400, 500, 'coche');
@@ -74,19 +78,31 @@ function hitObstacle(coche, obstacle) {
 // Función para actualizar la escena
 function update() {
     if (this.gameOver) {
-        tiempoObstaculo.paused = true
+        tiempoObstaculo.paused = true;
         return; // Si el juego terminó, no actualiza más
     }
 
     // Mueve el fondo de la carretera para crear un efecto de desplazamiento
-    carreterra.tilePositionY += 4; // Velocidad del fondo
+    carreterra.tilePositionY -= 4; // Velocidad del fondo
 
     // Controla el movimiento del coche
-    if (cursors.left.isDown) {
-        coche.setVelocityX(-160); // Mueve el coche a la izquierda
-    } else if (cursors.right.isDown) {
-        coche.setVelocityX(160); // Mueve el coche a la derecha
-    } else {
-        coche.setVelocityX(0); // Detiene el movimiento horizontal
+    if (cursors.left.isDown && leftDown) {
+        if (posArray <= 2) {
+            posArray += 1;  
+        }
+        coche.x = arrayPosicionesCarreteras[posArray];
+        leftDown = false;
+    } else if (cursors.right.isDown && rightDown) {
+        if (posArray >= 0) {
+            posArray -= 1;
+        }
+        coche.x = arrayPosicionesCarreteras[posArray];
+        rightDown = false;
+    } 
+
+    if (cursors.left.isUp){
+        leftDown = true;
+    } else if (cursors.right.isUp) {
+        rightDown = true;
     }
 }
