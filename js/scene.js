@@ -25,6 +25,12 @@ let carreterra;
 let obstacles;
 let tiempoObstaculo;
 let posArray = 1;
+let score = 0;
+let scoreAux = 0;
+let stamina = 100;
+let staminaAux = 0;
+let staminaTime = 0;
+let dificultat = 0;
 let arrayPosicionesCarreteras = [220,410,585];
 let rightDown, leftDown = true;
 
@@ -38,6 +44,9 @@ function create () {
     // Crea un fondo de carretera y le añade movimiento
     carreterra = this.add.tileSprite(400, 450, 0, 0, 'carretera'); 
 
+    this.scoreText = this.add.text(10, 10, 'Puntuación: 0', { fontFamily: 'Arial', fontSize: 24, color: '#ffffff' });
+    this.stamina = this.add.text(10, 50, 'stamina: 100', { fontFamily: 'Arial', fontSize: 24, color: '#ffffff' });
+
     // Crea el coche con física
     coche = this.physics.add.sprite(400, 500, 'coche');
     coche.setCollideWorldBounds(true); // Limita el movimiento del coche a la pantalla
@@ -50,29 +59,32 @@ function create () {
 
     // Crea un temporizador para generar obstáculos cada 1.5 segundos
     tiempoObstaculo = this.time.addEvent({
-        delay: 1500,
+        delay: 3000,
         callback: spawnObstacle,
         callbackScope: this,
         loop: true,
     }); 
     // Configura la colisión entre el coche y los obstáculos
     this.physics.add.overlap(coche, obstacles, hitObstacle, null, this);
-
+    
 }
 
 // Función para generar obstáculos
 function spawnObstacle() {
-    const x = Phaser.Math.Between(100, 700); // Posición horizontal aleatoria
-    const obstacle = obstacles.create(x, -50, 'obstacle'); // Crea un obstáculo en una posición aleatoria
-    obstacle.setVelocityY(200); // Hace que el obstáculo se mueva hacia abajo
+    const x = Phaser.Math.Between(0, 2); // Posición horizontal aleatoria
+    const obstacle = obstacles.create(arrayPosicionesCarreteras[x], -50, 'obstacle'); // Crea un obstáculo en una posición aleatoria
+    obstacle.setVelocityY(Math.min(4*(200+dificultat), 10000)); // Hace que el obstáculo se mueva hacia abajo
 }
 
 // Función para manejar la colisión entre el coche y un obstáculo
 function hitObstacle(coche, obstacle) {
-    this.physics.pause(); // Detiene la física
-    coche.setTint(0xff0000); // Cambia el color del coche a rojo
-    coche.anims.stop(); // Detiene las animaciones
-    this.gameOver = true; // Establece la bandera de fin de juego
+    if (stamina == 100){
+        this.physics.pause(); // Detiene la física
+        coche.setTint(0xff0000); // Cambia el color del coche a rojo
+        coche.anims.stop(); // Detiene las animaciones
+        this.gameOver = true; // Establece la bandera de fin de juego
+    }
+   
 }
 
 // Función para actualizar la escena
@@ -81,20 +93,36 @@ function update() {
         tiempoObstaculo.paused = true;
         return; // Si el juego terminó, no actualiza más
     }
+    
+    tiempoObstaculo.delay = Math.max((3000-dificultat*200), 500);
+    //dificultat
+    dificultat += 0.005;
 
+    // Puntuacion
+    scoreAux += 0.1;
+    score = Math.floor(scoreAux);
+    this.scoreText.setText('Puntuación: ' + score);
+
+    //stamina
+    if (stamina < 100) {
+        staminaAux += 0.5;
+        stamina = Math.floor(staminaAux);
+        this.stamina.setText('stamina: ' + stamina);
+    }
+    
     // Mueve el fondo de la carretera para crear un efecto de desplazamiento
-    carreterra.tilePositionY -= 4; // Velocidad del fondo
-
+    carreterra.tilePositionY -= Math.min(dificultat, 18); // Velocidad del fondo
+   
     // Controla el movimiento del coche
     if (cursors.left.isDown && leftDown) {
-        if (posArray <= 2) {
-            posArray += 1;  
+        if (!posArray < 1) {
+            posArray -= 1;  
         }
         coche.x = arrayPosicionesCarreteras[posArray];
         leftDown = false;
     } else if (cursors.right.isDown && rightDown) {
-        if (posArray >= 0) {
-            posArray -= 1;
+        if (posArray < 2) {
+            posArray += 1;
         }
         coche.x = arrayPosicionesCarreteras[posArray];
         rightDown = false;
@@ -102,7 +130,13 @@ function update() {
 
     if (cursors.left.isUp){
         leftDown = true;
-    } else if (cursors.right.isUp) {
+    }
+    if (cursors.right.isUp) {
         rightDown = true;
+    }
+
+    if (cursors.space.isDown && stamina == 100) {
+        staminaAux = 0;
+        stamina = 0;
     }
 }
