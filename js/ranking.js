@@ -21,7 +21,7 @@ addEventListener('load', function() {
     }
     divPuntuacions.appendChild(ul);
 
-    document.getElementById('return').addEventListener('click', 
+    document.getElementById('exit').addEventListener('click', 
     function(){
     window.location.assign("../");
     });
