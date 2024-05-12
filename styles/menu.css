@@ -12,6 +12,7 @@ button{
 	border-radius:1rem;
     box-shadow: 0px 0px 2px 2px rgb(0,0,0);
 	font-size: 2.5rem;
+	font-weight: bold;
 }
 
 #play{
@@ -44,6 +45,8 @@ button{
 
 h1{
 	color: red;
+	font-size: 3rem;
+	font-family:system-ui;
 	text-shadow: 2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff,
                1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff;
 }
