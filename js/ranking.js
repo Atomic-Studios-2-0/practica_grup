@@ -25,4 +25,26 @@ addEventListener('load', function() {
     function(){
     window.location.assign("../");
     });
+
+    var audioPlayer = document.getElementById('audioPlayer');
+    var audioIcon = document.getElementById('audioIcon');
+    if (audioPlayer.paused) {
+        audioPlayer.play();
+        audioIcon.classList.remove('fa-volume-up');
+        audioIcon.classList.add('fa-volume-mute'); 
+    }
+    
+
+    document.getElementById('Audio').addEventListener('click', function() {
+        if (audioPlayer.paused) {
+            audioPlayer.play();
+            audioIcon.classList.remove('fa-volume-mute');
+            audioIcon.classList.add('fa-volume-up');
+        }
+        else{
+            audioPlayer.pause();
+            audioIcon.classList.remove('fa-volume-up');
+            audioIcon.classList.add('fa-volume-mute'); 
+        } 
+    });
 });
