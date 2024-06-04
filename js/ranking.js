@@ -15,7 +15,7 @@ addEventListener('load', function() {
         const listaRanking = JSON.parse(ranking);
         listaRanking.forEach((entry, index) => {
             const li = document.createElement("li");
-            li.textContent = `${index + 1}: ${entry.nom} | ${entry.puntuacio} puntos`;
+            li.textContent = `${index + 1}: ${entry.nom} | ${entry.score} puntos`;
             ul.appendChild(li);
         });
     }
