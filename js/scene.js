@@ -38,6 +38,7 @@ function preload () {
     this.load.image('carretera', '../resources/carretera.png'); // Imagen del fondo de la carretera
     this.load.image('coche', '../resources/coche.png'); // Imagen del coche
     this.load.image('obstacle', '../resources/obstacle.png'); // Imagen del obstáculo
+    this.load.audio('boom', '../resources/boom.mp3'); // Sonido de la explosión
 }
 
 function create () {    
@@ -83,6 +84,13 @@ function hitObstacle(coche, obstacle) {
         coche.setTint(0xff0000); // Cambia el color del coche a rojo
         coche.anims.stop(); // Detiene las animaciones
         this.gameOver = true; // Establece la bandera de fin de juego
+
+        this.sound.play('boom'); // Suena el efecto de chocar
+
+        setTimeout(() => {
+            localStorage.setItem('PuntFinal', score);
+            window.location.assign('fipartida.html');
+        }, 2210); 
     }
    
 }
