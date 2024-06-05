@@ -33,11 +33,14 @@ let staminaTime = 0;
 let dificultat = 0;
 let arrayPosicionesCarreteras = [220,410,585];
 let rightDown, leftDown = true;
+let backgroundMusic;
 
 function preload () { 
     this.load.image('carretera', '../resources/carretera.png'); // Imagen del fondo de la carretera
     this.load.image('coche', '../resources/coche.png'); // Imagen del coche
     this.load.image('obstacle', '../resources/obstacle.png'); // Imagen del obstáculo
+    this.load.audio('boom', '../resources/boom.mp3'); // Sonido de la explosión
+    this.load.audio('musiquita', '../resources/Persecucio.mp3'); // Música de fondo
 }
 
 function create () {    
@@ -45,7 +48,7 @@ function create () {
     carreterra = this.add.tileSprite(400, 450, 0, 0, 'carretera'); 
 
     this.scoreText = this.add.text(10, 10, 'Puntuación: 0', { fontFamily: 'Arial', fontSize: 24, color: '#ffffff' });
-    this.stamina = this.add.text(10, 50, 'stamina: 100', { fontFamily: 'Arial', fontSize: 24, color: '#ffffff' });
+    this.stamina = this.add.text(10, 50, 'Stamina: 100', { fontFamily: 'Arial', fontSize: 24, color: '#ffffff' });
 
     // Crea el coche con física
     coche = this.physics.add.sprite(400, 500, 'coche');
@@ -66,6 +69,10 @@ function create () {
     }); 
     // Configura la colisión entre el coche y los obstáculos
     this.physics.add.overlap(coche, obstacles, hitObstacle, null, this);
+
+     // Se reproduce la música de fondo
+     backgroundMusic = this.sound.add('musiquita', { loop: true });
+     backgroundMusic.play();
     
 }
 
@@ -83,6 +90,14 @@ function hitObstacle(coche, obstacle) {
         coche.setTint(0xff0000); // Cambia el color del coche a rojo
         coche.anims.stop(); // Detiene las animaciones
         this.gameOver = true; // Establece la bandera de fin de juego
+         
+        backgroundMusic.stop(); // Detiene la música de fondo
+        this.sound.play('boom'); // Suena el efecto de chocar
+
+        setTimeout(() => {
+            localStorage.setItem('PuntFinal', score);
+            window.location.assign('fipartida.html');
+        }, 2210); 
     }
    
 }
@@ -107,7 +122,7 @@ function update() {
     if (stamina < 100) {
         staminaAux += 0.5;
         stamina = Math.floor(staminaAux);
-        this.stamina.setText('stamina: ' + stamina);
+        this.stamina.setText('Stamina: ' + stamina);
     }
     
     // Mueve el fondo de la carretera para crear un efecto de desplazamiento
